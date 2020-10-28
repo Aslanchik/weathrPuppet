@@ -5,11 +5,11 @@ const puppeteer = require("puppeteer");
 router.post("/", async (req, res) => {
   const { location } = req.body;
 
-  //   Need location name, temp, humidity, windspeed and Icon.
   let queryData = { location };
 
   try {
-    const browser = await puppeteer.launch({ args:['--no-sandbox' ]});
+    // Init puppeteer and go to google.com for weather data
+    const browser = await puppeteer.launch({ args:['--no-sandbox']});
     const page = await browser.newPage();
     await page.goto(`https://www.google.com/`, {waitUntil: 'networkidle2'});
     await page.waitForSelector('input[name=q]');
@@ -17,6 +17,7 @@ router.post("/", async (req, res) => {
     await page.keyboard.press('Enter');
     await page.waitForSelector('#wob_tci');
 
+    // Get values from page and assign them to keys inside the queryData object
     queryData['icon'] = await page.$eval('#wob_tci', el=> el.src);
     queryData['tempC'] = await page.$eval('#wob_tm', el=> el.textContent);
     queryData['tempF'] = await page.$eval('#wob_ttm', el=> el.textContent);
@@ -25,12 +26,12 @@ router.post("/", async (req, res) => {
     queryData['wind'] = await page.$eval('#wob_ws', el=> el.textContent);
     queryData['percipitation'] = await page.$eval('#wob_pp', el=>el.textContent);
     queryData['lastUpdated'] = await page.$eval('#wob_dts', el=> el.textContent);
-    
+
+    // Once all promises resolve, send complete object to client 
     res.status(200).json(queryData);
   } catch (err) {
     res.status(400).json({message: err});
   }
-
 });
 
 module.exports = router;
