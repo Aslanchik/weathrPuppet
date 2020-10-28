@@ -5,10 +5,11 @@ const puppeteer = require("puppeteer");
 router.post("/", async (req, res) => {
   const { location } = req.body;
 
-  //   Need location name, temp, humidity, windspeed and Icon. split by current, day and night.
-  let queryData = { };
+  //   Need location name, temp, humidity, windspeed and Icon.
+  let queryData = { location };
+
   try {
-    const browser = await puppeteer.launch({ headless:false, args:['--no-sandbox']});
+    const browser = await puppeteer.launch({ args:['--no-sandbox' ]});
     const page = await browser.newPage();
     await page.goto(`https://www.google.com/`, {waitUntil: 'networkidle2'});
     await page.waitForSelector('input[name=q]');
@@ -16,17 +17,18 @@ router.post("/", async (req, res) => {
     await page.keyboard.press('Enter');
     await page.waitForSelector('#wob_tci');
 
-    queryData['icon'] = await page.$eval('#wob_tci', el=>el.src);
-    queryData['temp'] = await page.$eval('#wob_tm', el=>el.textContent);
-    queryData['description'] = await page.$eval('#wob_dc', el=>el.textContent);
-    queryData['humidity'] = await page.$eval('#wob_hm', el=>el.textContent);
-    queryData['wind'] = await page.$eval('#wob_ws', el=>el.textContent);
+    queryData['icon'] = await page.$eval('#wob_tci', el=> el.src);
+    queryData['tempC'] = await page.$eval('#wob_tm', el=> el.textContent);
+    queryData['tempF'] = await page.$eval('#wob_ttm', el=> el.textContent);
+    queryData['description'] = await page.$eval('#wob_dc', el=> el.textContent);
+    queryData['humidity'] = await page.$eval('#wob_hm', el=> el.textContent);
+    queryData['wind'] = await page.$eval('#wob_ws', el=> el.textContent);
     queryData['percipitation'] = await page.$eval('#wob_pp', el=>el.textContent);
-    queryData['sample'] = await page.$eval('#wob_dts', el=>el.textContent);
-    console.log(queryData);
+    queryData['lastUpdated'] = await page.$eval('#wob_dts', el=> el.textContent);
     
+    res.status(200).json(queryData);
   } catch (err) {
-    console.log(err);
+    res.status(400).json({message: err});
   }
 
 });
