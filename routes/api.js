@@ -5,7 +5,6 @@ const puppeteer = require("puppeteer");
 router.post("/", async (req, res) => {
   const { location } = req.body;
 
-
   let queryData = {};
 
   try {
