@@ -5,7 +5,8 @@ const puppeteer = require("puppeteer");
 router.post("/", async (req, res) => {
   const { location } = req.body;
 
-  let queryData = { location };
+
+  let queryData = {};
 
   try {
     // Init puppeteer and go to google.com for weather data
@@ -19,6 +20,7 @@ router.post("/", async (req, res) => {
 
     // Get values from page and assign them to keys inside the queryData object
     queryData['icon'] = await page.$eval('#wob_tci', el=> el.src);
+    queryData['location'] = await page.$eval('#wob_loc', el=> el.textContent);
     queryData['tempC'] = await page.$eval('#wob_tm', el=> el.textContent);
     queryData['tempF'] = await page.$eval('#wob_ttm', el=> el.textContent);
     queryData['description'] = await page.$eval('#wob_dc', el=> el.textContent);
