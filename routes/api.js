@@ -11,8 +11,9 @@ router.post("/", async (req, res) => {
 
   try {
     // Init puppeteer and go to google.com for weather data
-    const browser = await puppeteer.launch({ args:['--no-sandbox']}).then();
     console.log(1)
+    const browser = await puppeteer.launch({ args:['--no-sandbox']}).then();
+    console.log(12)
     const page = await browser.newPage();
     console.log(2)
     await page.goto(`https://www.google.com/`, {waitUntil: 'documentloaded'});
