@@ -11,14 +11,20 @@ router.post("/", async (req, res) => {
 
   try {
     // Init puppeteer and go to google.com for weather data
-    const browser = await puppeteer.launch({ args:['--no-sandbox']});
+    const browser = await puppeteer.launch({ args:['--no-sandbox']}).then();
+    console.log(1)
     const page = await browser.newPage();
+    console.log(2)
     await page.goto(`https://www.google.com/`, {waitUntil: 'documentloaded'});
+    console.log(3)
     await page.waitForSelector('input[name=q]');
+    console.log(4)
     await page.$eval('input[name=q]', (el, value) => el.value = value, `${location} weather`);
+    console.log(5)
     await page.keyboard.press('Enter');
-    await page.waitForSelector('#wob_tci', {visible:true});
-    console.log('works')
+    console.log(6)
+    await page.waitForSelector('#wob_tci');
+    console.log(7)
     // Get values from page and assign them to keys inside the queryData object
     queryData['icon'] = await page.$eval('#wob_tci', el=> el.src);
     queryData['location'] = await page.$eval('#wob_loc', el=> el.textContent);
