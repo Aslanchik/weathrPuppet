@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
     console.log(12)
     const page = await browser.newPage();
     console.log(2)
-    await page.goto(`https://www.google.com/`, {waitUntil: 'documentloaded'});
+    await page.goto(`https://www.google.com/`);
     console.log(3)
     await page.waitForSelector('input[name=q]');
     console.log(4)
