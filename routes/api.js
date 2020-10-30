@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
   try {
     // Init puppeteer and go to google.com for weather data
     console.log(1)
-    const browser = await puppeteer.launch({ args:['--no-sandbox']}).then();
+    const browser = await puppeteer.launch({ args:['--no-sandbox', '--disable-dev-shm-usage', '--disable-setuid-sandbox', '--single-process']}).then();
     console.log(12)
     const page = await browser.newPage();
     console.log(2)
